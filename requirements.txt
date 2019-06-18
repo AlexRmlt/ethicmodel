@@ -1,2 +1,7 @@
 gunicorn
 flask
+pandas
+numpy
+nltk
+sklearn
+joblib
