@@ -4,8 +4,8 @@ import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
+from nltk.stem import WordNetLemmatizer
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 from sklearn import model_selection
@@ -45,12 +45,15 @@ def train_model():
     # Step 3) Tokenization
     df_corpus['text'] = [word_tokenize(entry) for entry in df_corpus['text']]
 
-    # Step 4) Remove Stop words, Non-Numeric and perfom Word Stemming/Lemmenting.
+    # Step 4) Remove stop words and names, non-numeric and perfom word stemming/lemmenting.
+    with open('model/names.txt') as file:
+        names = set(file.read().split('\n'))
+
     for index, entry in enumerate(df_corpus['text']):
         final_words = []
         lemmatizer = WordNetLemmatizer()
         for word, tag in pos_tag(entry):
-            if word not in stopwords.words('english') and word.isalpha():
+            if word not in stopwords.words('english') and word not in names and word.isalpha():
                 final_word = lemmatizer.lemmatize(word, tag_map[tag[0]])
                 final_words.append(final_word)
         df_corpus.loc[index,'text_processed'] = str(final_words)

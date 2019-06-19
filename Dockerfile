@@ -1,9 +1,10 @@
 FROM python:alpine
 
-COPY requirements.txt .
+RUN echo "http://dl-8.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+RUN apk --no-cache --update-cache add gcc gfortran python python-dev py-pip build-base wget freetype-dev libpng-dev openblas-dev
+RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
 
-RUN apk update
-RUN apk add make automake gcc g++ subversion python3-dev
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 WORKDIR /app

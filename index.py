@@ -14,10 +14,9 @@ def append():
     if not request.is_json:
         return 'Invalid input', 400
     
-    with open(r'model/moral_data.csv', 'a') as f:
-        writer = csv.writer(f, delimiter=';')
-        for row in request.json:
-            writer.writerow(list(row.values()))
+    with open('model/moral-data.csv', 'a') as f:
+        writer = csv.DictWriter(f, request.json[0].keys(), delimiter=';')
+        writer.writerows(request.json)
 
     # retrain
     sgd.train_model()
@@ -37,7 +36,7 @@ def predict():
     try:
         res = {
             "general_rule": labels[gr],
-            "confidence": confidence
+            "confidence": round(confidence, 2)
         }
     except KeyError:
         msg = 'Error predicting general rule'
