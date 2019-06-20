@@ -33,27 +33,12 @@ def train_model():
     df_corpus = df_corpus.drop(['deontic_modality', 'type'], axis=1)
     df_corpus.rename(columns={'general_rule': 'labels'}, inplace=True)
 
-    # Step 1) Remove blank rows if any.
+    # Remove blank rows if any.
     df_corpus['text'].dropna(inplace=True)
 
-    # Step 2) Change all the text to lower case
-    df_corpus['text'] = [entry.lower() for entry in df_corpus['text']]
-
-    # Step 3) Tokenization
-    df_corpus['text'] = [word_tokenize(entry) for entry in df_corpus['text']]
-
-    # Step 4) Remove stop words and names, non-numeric and perfom word stemming/lemmenting.
-    with open('model/names.txt') as file:
-        names = set(file.read().split('\n'))
-
+    # Tokenization, remove stop words and names, perfom word stemming/lemmenting.
     for index, entry in enumerate(df_corpus['text']):
-        final_words = []
-        lemmatizer = WordNetLemmatizer()
-        for word, tag in pos_tag(entry):
-            if word not in stopwords.words('english') and word not in names and word.isalpha():
-                final_word = lemmatizer.lemmatize(word, tag_map[tag[0]])
-                final_words.append(final_word)
-        df_corpus.loc[index,'text_processed'] = str(final_words)
+        df_corpus.loc[index,'text_processed'] = preprocess(entry)
 
     # train model
     sgd = Pipeline([
@@ -69,13 +54,26 @@ def train_model():
 def preprocess(text):
     text = text.lower()
     text = word_tokenize(text)
+
+    with open('model/names.txt') as file:
+        names = set(file.read().split('\n'))
     
     final_words = []
     lemmatizer = WordNetLemmatizer()
-    for word, tag in pos_tag(text):
-        if word not in stopwords.words('english') and word.isalpha():
-            final_word = lemmatizer.lemmatize(word, tag_map[tag[0]])
-            final_words.append(final_word)
+
+    try:
+        pos_tags = pos_tag(text)
+    except MemoryError:
+        for word in text:
+            if word not in stopwords.words('english') and word not in names and word.isalpha():
+                final_word = lemmatizer.lemmatize(word)
+                final_words.append(final_word)
+    else:
+        for word, tag in pos_tags:
+            if word not in stopwords.words('english') and word not in names and word.isalpha():
+                final_word = lemmatizer.lemmatize(word, tag_map[tag[0]])
+                final_words.append(final_word)
+    
     return str(final_words)
 
 def predict_class(sentence):

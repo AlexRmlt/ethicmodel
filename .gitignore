@@ -1,2 +1,5 @@
 __pycache__/
 .ipynb_checkpoints/
+
+model/moral-data.csv
+model/gr/model_sgd.pkl
