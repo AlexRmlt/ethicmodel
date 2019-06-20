@@ -19,15 +19,19 @@ def append():
         writer.writerows(request.json)
 
     # retrain
-    if not sgd.train_model() == None:
+    try: 
+        sgd.train_model()
         return jsonify('Success!'), 200
-    else:
-        return jsonify('Error training model!'), 500
+    except FileNotFoundError:
+        return jsonify('Error training model: no moral data available!'), 500
 
 @app.route('/train', methods=['GET'])
 def train():
-    sgd.train_model()
-    return jsonify('Success!'), 200
+    try: 
+        sgd.train_model()
+        return jsonify('Success!'), 200
+    except FileNotFoundError:
+        return jsonify('Error training model: no moral data available!'), 500
 
 @app.route('/predict', methods=['GET'])
 def predict():

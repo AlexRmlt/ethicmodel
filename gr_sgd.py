@@ -33,8 +33,8 @@ def train_model():
     try:
         df_corpus = pd.read_csv(MORAL_DATA, sep=';')
     except FileNotFoundError:
-        logger.warning('Could not train model, did not find moral data csv.')
-        return None
+        logger.warning('Could not train model: did not find moral data csv.')
+        raise
 
     df_corpus = df_corpus.drop(['deontic_modality', 'type'], axis=1)
     df_corpus.rename(columns={'general_rule': 'labels'}, inplace=True)
