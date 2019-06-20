@@ -19,9 +19,10 @@ def append():
         writer.writerows(request.json)
 
     # retrain
-    sgd.train_model()
-
-    return jsonify('Success!'), 200
+    if not sgd.train_model() == None:
+        return jsonify('Success!'), 200
+    else:
+        return jsonify('Error training model!'), 500
 
 @app.route('/train', methods=['GET'])
 def train():
