@@ -14,6 +14,7 @@ from sklearn.pipeline import Pipeline
 
 from joblib import dump, load
 from collections import defaultdict
+import os
 import logging
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
@@ -47,6 +48,12 @@ def train_model():
         ('clf', SGDClassifier(loss='modified_huber', penalty='l2',alpha=1e-3, random_state=42, max_iter=5, tol=None))
     ])
     sgd.fit(df_corpus['text_processed'], df_corpus['labels'])
+
+    # create directory if it does not exist
+    directory = MODEL_SGD.split('/')[0] + '/' + MODEL_SGD.split('/')[1]
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
     dump(sgd, MODEL_SGD) 
 
     return sgd
@@ -81,7 +88,7 @@ def predict_class(sentence):
         clf = load(MODEL_SGD) 
     except FileNotFoundError:
         logger.warning('Could not load SGD model.')
-        return None
+        return None, None
     
     text = [preprocess(sentence)]
     return clf.predict(text)[0], max(clf.predict_proba(text)[0])

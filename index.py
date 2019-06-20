@@ -38,7 +38,7 @@ def predict():
             "general_rule": labels[gr],
             "confidence": round(confidence, 2)
         }
-    except KeyError:
+    except (KeyError, TypeError):
         msg = 'Error predicting general rule'
         logger.warning(msg)
         return jsonify(msg), 500
