@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
@@ -30,8 +29,6 @@ tag_map['R'] = wn.ADV
 
 def train_model():
     # Preprocessing
-    np.random.seed(500)
-
     df_corpus = pd.read_csv(MORAL_DATA, sep=';')
     df_corpus = df_corpus.drop(['deontic_modality', 'type'], axis=1)
     df_corpus.rename(columns={'general_rule': 'labels'}, inplace=True)
