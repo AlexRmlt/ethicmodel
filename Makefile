@@ -1,4 +1,4 @@
-.PHONY: start-dev run-container restart-container stop-container
+.PHONY: start-dev start-prod run-container restart-container stop-container
 
 TEST_PATH=./
 export FLASK_APP=./index.py
@@ -6,6 +6,8 @@ export FLASK_APP=./index.py
 help:
 	@echo "    start-dev"
 	@echo "       Start Ethicmodel Flask server (development)"
+	@echo "    start-prod"
+	@echo "       Start Ethicmodel Gunicorn server (production)"
 	@echo "    run-container"
 	@echo "       Start Ethicmodel server in Docker container"
 	@echo "    restart-container"
