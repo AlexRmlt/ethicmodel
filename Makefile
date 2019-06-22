@@ -1,4 +1,4 @@
-.PHONY: start-dev run restart stop
+.PHONY: start-dev run-container restart-container stop-container
 
 TEST_PATH=./
 export FLASK_APP=./index.py
@@ -6,17 +6,20 @@ export FLASK_APP=./index.py
 help:
 	@echo "    start-dev"
 	@echo "       Start Ethicmodel Flask server (development)"
-	@echo "    run"
+	@echo "    run-container"
 	@echo "       Start Ethicmodel server in Docker container"
-	@echo "    restart"
+	@echo "    restart-container"
 	@echo "       Restart running container"
-	@echo "    stop"
+	@echo "    stop-container"
 	@echo "       Stop running container"
 
 start-dev:
 	flask run -h 0.0.0.0 -p 5050
 
-run:
+start-prod:
+	gunicorn --bind 0.0.0.0:5050 index:app
+
+run-container:
 	docker run \
 		-p 5050:5050 \
 		-v $(shell pwd):/app \
@@ -24,8 +27,8 @@ run:
 		aroemelt/ethicbot:ethicmodel \
 		gunicorn -w 4 -b 0.0.0.0:5050 index:app
 
-restart:
+restart-container:
 	docker restart ethicmodel
 
-stop:
+stop-container:
 	docker stop ethicmodel

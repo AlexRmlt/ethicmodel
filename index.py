@@ -4,10 +4,10 @@ import logging
 
 import gr_sgd as sgd
 
+app = Flask(__name__)
+
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-app = Flask(__name__)
 
 @app.route('/append', methods=['POST'])
 def append():
