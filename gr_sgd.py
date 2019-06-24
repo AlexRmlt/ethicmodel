@@ -55,7 +55,7 @@ def train_model():
     sgd.fit(df_corpus['text_processed'], df_corpus['labels'])
 
     # create directory if it does not exist
-    directory = MODEL_SGD.split('/')[0] + '/' + MODEL_SGD.split('/')[1]
+    directory = MODEL_SGD.rsplit('/', 1)[0]
     if not os.path.exists(directory):
         os.makedirs(directory)
     
