@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 MODEL_SGD = os.path.join(os.path.dirname(__file__), 'model', 'gr', 'model_sgd.pkl') 
 MORAL_DATA = os.path.join(os.path.dirname(__file__), 'model', 'moral-data.csv')
+NAMES_LIST = os.path.join(os.path.dirname(__file__), 'model', 'names.txt')
 
 tag_map = defaultdict(lambda : wn.NOUN)
 tag_map['J'] = wn.ADJ
@@ -67,7 +68,7 @@ def preprocess(text):
     text = text.lower()
     text = word_tokenize(text)
 
-    with open('model/names.txt') as file:
+    with open(NAMES_LIST) as file:
         names = set(file.read().split('\n'))
     
     final_words = []
