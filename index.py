@@ -3,6 +3,7 @@ import csv
 import logging
 
 import gr_sgd as sgd
+from gr_sgd import MORAL_DATA
 
 app = Flask(__name__)
 
@@ -14,7 +15,7 @@ def append():
     if not request.is_json:
         return 'Invalid input', 400
     
-    with open('model/moral-data.csv', 'a') as f:
+    with open(MORAL_DATA, 'a') as f:
         writer = csv.DictWriter(f, request.json[0].keys(), delimiter=';')
         writer.writerows(request.json)
 
