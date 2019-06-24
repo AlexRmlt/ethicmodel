@@ -3234,6 +3234,7 @@ hannis
 hanns
 hanny
 hans
+hänsel
 harald
 hardyal
 hareton
@@ -5672,7 +5673,6 @@ miro
 miroslav
 misbah
 misha
-miss
 missagh
 missie
 missy
