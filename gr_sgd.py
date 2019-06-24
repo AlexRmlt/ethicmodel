@@ -20,8 +20,8 @@ import logging
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-MODEL_SGD = 'model/gr/model_sgd.pkl'
-MORAL_DATA = 'model/moral-data.csv'
+MODEL_SGD = os.path.join(os.path.dirname(__file__), 'model', 'gr', 'model_sgd.pkl') 
+MORAL_DATA = os.path.join(os.path.dirname(__file__), 'model', 'moral-data.csv')
 
 tag_map = defaultdict(lambda : wn.NOUN)
 tag_map['J'] = wn.ADJ
