@@ -9,8 +9,11 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 from sklearn import model_selection
 from sklearn.metrics import accuracy_score
-from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
 
 from joblib import dump, load
 from collections import defaultdict
@@ -117,7 +120,7 @@ def predict_class(sentence):
     try:
         clf = load(MODEL_GR) 
     except FileNotFoundError:
-        logger.warning('Could not load SGD model.')
+        logger.warning('Could not load gr-model.')
         return None, None
     
     text = [preprocess(sentence)]
