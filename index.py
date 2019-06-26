@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 import csv
 import logging
 
-import gr_sgd as sgd
-from gr_sgd import MORAL_DATA
+import classifier_gr as cls
+from classifier_gr import MORAL_DATA
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ def append():
 
     # retrain
     try: 
-        sgd.train_model()
+        cls.train_model()
         return jsonify('Success!'), 200
     except FileNotFoundError:
         return jsonify('Error training model: no moral data available!'), 500
@@ -29,7 +29,7 @@ def append():
 @app.route('/train', methods=['GET'])
 def train():
     try: 
-        sgd.train_model()
+        cls.train_model()
         return jsonify('Success!'), 200
     except FileNotFoundError:
         return jsonify('Error training model: no moral data available!'), 500
@@ -37,7 +37,7 @@ def train():
 @app.route('/predict', methods=['GET'])
 def predict():
     labels = ['No', 'Yes']
-    gr, confidence = sgd.predict_class(request.args.get('t'))
+    gr, confidence = cls.predict_class(request.args.get('t'))
     
     try:
         res = {

@@ -20,7 +20,9 @@ import logging
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-MODEL_SGD = os.path.join(os.path.dirname(__file__), 'model', 'gr', 'model_sgd.pkl') 
+CLASSIFIER = 'svm'
+
+MODEL_GR = os.path.join(os.path.dirname(__file__), 'model', 'gr', 'model_gr.pkl') 
 MORAL_DATA = os.path.join(os.path.dirname(__file__), 'model', 'moral-data.csv')
 NAMES_LIST = os.path.join(os.path.dirname(__file__), 'model', 'names.txt')
 
@@ -48,21 +50,43 @@ def train_model():
         df_corpus.loc[index,'text_processed'] = preprocess(entry)
 
     # train model
-    sgd = Pipeline([
-        ('vect', CountVectorizer()),
-        ('tfidf', TfidfTransformer()),
-        ('clf', SGDClassifier(loss='modified_huber', penalty='l2',alpha=1e-3, random_state=42, max_iter=5, tol=None))
-    ])
-    sgd.fit(df_corpus['text_processed'], df_corpus['labels'])
+    cls = classifier(CLASSIFIER)
+    cls.fit(df_corpus['text_processed'], df_corpus['labels'])
 
     # create directory if it does not exist
-    directory = MODEL_SGD.rsplit('/', 1)[0]
+    directory = MODEL_GR.rsplit('/', 1)[0]
     if not os.path.exists(directory):
         os.makedirs(directory)
     
-    dump(sgd, MODEL_SGD) 
+    dump(cls, MODEL_GR) 
 
-    return sgd
+    return cls
+
+def classifier(name):
+    if name == 'sgd':
+        cls = Pipeline([
+            ('vect', CountVectorizer()),
+            ('tfidf', TfidfTransformer()),
+            ('clf', SGDClassifier(loss='modified_huber', penalty='l2',alpha=1e-3, random_state=42, max_iter=5, tol=None))
+        ])
+    elif name == 'svm':
+        cls = Pipeline([('vect', CountVectorizer()),
+            ('tfidf', TfidfTransformer()),
+            ('clf', SVC(C=1.0, kernel='linear', degree=3, gamma='auto', probability=True)),
+        ])
+    elif name == 'logreg':
+        cls = Pipeline([('vect', CountVectorizer()),
+            ('tfidf', TfidfTransformer()),
+            ('clf', LogisticRegression(n_jobs=1, C=1e5)),
+        ])
+    else:
+        cls = Pipeline([
+            ('vect', CountVectorizer()),
+            ('tfidf', TfidfTransformer()),
+            ('clf', SGDClassifier(loss='modified_huber', penalty='l2',alpha=1e-3, random_state=42, max_iter=5, tol=None))
+        ])
+
+    return cls
 
 def preprocess(text):
     text = text.lower()
@@ -91,7 +115,7 @@ def preprocess(text):
 
 def predict_class(sentence):
     try:
-        clf = load(MODEL_SGD) 
+        clf = load(MODEL_GR) 
     except FileNotFoundError:
         logger.warning('Could not load SGD model.')
         return None, None
